@@ -133,13 +133,12 @@ class ScratcherState extends State<Scratcher> {
       builder: (BuildContext context, AsyncSnapshot<ui.Image?> snapshot) {
         if (snapshot.connectionState != ConnectionState.waiting) {
           return GestureDetector(
-            behavior: HitTestBehavior.deferToChild,
+            behavior: HitTestBehavior.opaque,
             onPanStart: canScratch
                 ? (details) {
                     widget.onScratchStart?.call();
                     if (widget.enabled) {
-                      _addPoint(details.localPosition);
-                      print('Touched');
+                      _addPoint(details.localPosition);                      
                     }
                   }
                 : null,
@@ -148,6 +147,7 @@ class ScratcherState extends State<Scratcher> {
                     widget.onScratchUpdate?.call();
                     if (widget.enabled) {
                       _addPoint(details.localPosition);
+                      print('Touched');
                     }
                   }
                 : null,
