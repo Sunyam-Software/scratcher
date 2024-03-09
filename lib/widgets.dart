@@ -148,7 +148,7 @@ class ScratcherState extends State<Scratcher> {
                     if (widget.enabled) {
                       _addPoint(details.localPosition);
                     }
-                  } print('Touched');
+                  }
                 : null,
             onPanEnd: canScratch
                 ? (details) {
