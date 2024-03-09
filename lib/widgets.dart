@@ -23,7 +23,6 @@ enum ScratchAccuracy {
 double _getAccuracyValue(ScratchAccuracy accuracy) {
   switch (accuracy) {
     case ScratchAccuracy.low:
-      print('LOW ACCURACY');
       return 10.0;
     case ScratchAccuracy.medium:
       return 30.0;
