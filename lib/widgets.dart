@@ -139,6 +139,7 @@ class ScratcherState extends State<Scratcher> {
                     widget.onScratchStart?.call();
                     if (widget.enabled) {
                       _addPoint(details.localPosition);
+                      print('Touched');
                     }
                   }
                 : null,
