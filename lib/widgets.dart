@@ -138,11 +138,7 @@ class ScratcherState extends State<Scratcher> {
                 ? (details) {
                     widget.onScratchStart?.call();
                     if (widget.enabled) {
-                      _addPoint(details.localPosition);  
-                      setState(() {
-            _isTouching = true;
-            _offset = details.localPosition;
-          });
+                      _addPoint(details.localPosition);
                     }
                   }
                 : null,
@@ -151,9 +147,6 @@ class ScratcherState extends State<Scratcher> {
                     widget.onScratchUpdate?.call();
                     if (widget.enabled) {
                       _addPoint(details.localPosition);
-                      setState(() {
-              _offset = details.localPosition;
-            });
                     }
                   }
                 : null,
