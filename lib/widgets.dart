@@ -133,7 +133,7 @@ class ScratcherState extends State<Scratcher> {
       builder: (BuildContext context, AsyncSnapshot<ui.Image?> snapshot) {
         if (snapshot.connectionState != ConnectionState.waiting) {
           return GestureDetector(
-            behavior: HitTestBehavior.opaque,
+            behavior: HitTestBehavior.translucent,
             onPanStart: canScratch
                 ? (details) {
                     widget.onScratchStart?.call();
