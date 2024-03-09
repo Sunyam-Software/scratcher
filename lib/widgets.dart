@@ -135,7 +135,7 @@ class ScratcherState extends State<Scratcher> {
           return GestureDetector(
              behavior: HitTestBehavior.translucent,
             onPanStart: canScratch
-                ? (details) {
+                ? (details) { print(details);
                     widget.onScratchStart?.call();
                     if (widget.enabled) {
                       _addPoint(details.localPosition);                      
