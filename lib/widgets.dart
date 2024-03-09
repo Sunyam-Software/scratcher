@@ -131,7 +131,7 @@ class ScratcherState extends State<Scratcher> {
     return FutureBuilder<ui.Image?>(
       future: _imageLoader,
       builder: (BuildContext context, AsyncSnapshot<ui.Image?> snapshot) {
-        
+        if (snapshot.connectionState != ConnectionState.waiting) {
           return GestureDetector(
              behavior: HitTestBehavior.translucent,
             onPanStart: canScratch
@@ -187,7 +187,7 @@ class ScratcherState extends State<Scratcher> {
                     ),
             ),
           );
-        
+        }
 
         return Container();
       },
