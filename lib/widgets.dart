@@ -127,7 +127,7 @@ class ScratcherState extends State<Scratcher> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { print('Building Widget');
     return FutureBuilder<ui.Image?>(
       future: _imageLoader,
       builder: (BuildContext context, AsyncSnapshot<ui.Image?> snapshot) {
