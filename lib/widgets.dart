@@ -127,13 +127,13 @@ class ScratcherState extends State<Scratcher> {
   }
 
   @override
-  Widget build(BuildContext context) { print('Building Widget');
+  Widget build(BuildContext context) {
     return FutureBuilder<ui.Image?>(
       future: _imageLoader,
       builder: (BuildContext context, AsyncSnapshot<ui.Image?> snapshot) {
         if (snapshot.connectionState != ConnectionState.waiting) {
           return GestureDetector(
-            behavior: HitTestBehavior.translucent,
+            // behavior: HitTestBehavior.translucent,
             onPanStart: canScratch
                 ? (details) {
                     widget.onScratchStart?.call();
