@@ -7,6 +7,7 @@ import 'package:scratcher/painter.dart';
 import 'package:scratcher/utils.dart';
 
 const _progressReportStep = 0.1;
+bool _isTouching = false;
 
 /// How accurate should the progress be tracked.
 enum ScratchAccuracy {
@@ -139,6 +140,10 @@ class ScratcherState extends State<Scratcher> {
                     widget.onScratchStart?.call();
                     if (widget.enabled) {
                       _addPoint(details.localPosition);
+                      
+                        setState(() {
+                          _isTouching = true;            
+                        });
                     }
                   }
                 : null,
@@ -155,6 +160,9 @@ class ScratcherState extends State<Scratcher> {
                     widget.onScratchEnd?.call();
                     if (widget.enabled) {
                       setState(() => points.add(null));
+                      setState(() {
+                        _isTouching = false;
+                      });
                     }
                   }
                 : null,
@@ -193,6 +201,17 @@ class ScratcherState extends State<Scratcher> {
       },
     );
   }
+
+  if (_isTouching)
+              Positioned(
+                left: _offset.dx - 12,
+                top: _offset.dy - 12,
+                child: Image.network(
+                  'https://static.vecteezy.com/system/resources/previews/024/043/960/original/money-coins-clipart-transparent-background-free-png.png',
+                  width: 34, // Adjust the width of the image as needed
+                  height: 34, // Adjust the height of the image as needed
+                ),
+              ),
 
   Future<ui.Image> _loadImage(Image image) async {
     // Create a completer to manage the asynchronous operation.
