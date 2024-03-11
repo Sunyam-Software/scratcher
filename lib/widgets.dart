@@ -138,7 +138,7 @@ class ScratcherState extends State<Scratcher> {
                 ? (details) {
                     widget.onScratchStart?.call();
                     if (widget.enabled) {
-                      _addPoint(details.localPosition); print(details);
+                      _addPoint(details.localPosition);
                     }
                   }
                 : null,
