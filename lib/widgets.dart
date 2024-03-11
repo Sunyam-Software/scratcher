@@ -127,10 +127,7 @@ class ScratcherState extends State<Scratcher> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    
-    bool _isTouching = false;
-    
+  Widget build(BuildContext context) {    
     return FutureBuilder<ui.Image?>(
       future: _imageLoader,
       builder: (BuildContext context, AsyncSnapshot<ui.Image?> snapshot) {
@@ -189,18 +186,8 @@ class ScratcherState extends State<Scratcher> {
                       child: widget.child,
                     ),
             ),
-          );
-          
-          if (_isTouching)
-              Positioned(
-                left: _offset.dx - 12,
-                top: _offset.dy - 12,
-                child: Image.network(
-                  'https://static.vecteezy.com/system/resources/previews/024/043/960/original/money-coins-clipart-transparent-background-free-png.png',
-                  width: 34, // Adjust the width of the image as needed
-                  height: 34, // Adjust the height of the image as needed
-                ),
-              ),
+          );        
+        
         }
 
         return Container();
@@ -243,7 +230,7 @@ class ScratcherState extends State<Scratcher> {
     return distance <= radius;
   }
 
-  void _addPoint(Offset position) { print(position); if(position != null){_isTouching = true;}else{_isTouching = false;}
+  void _addPoint(Offset position) { print(position); if(position != null){print("touching");}else{print("not touching");}
     // Ignore when same point is reported multiple times in a row
     if (_lastPosition == position) {
       return;
