@@ -229,7 +229,7 @@ class ScratcherState extends State<Scratcher> {
     return distance <= radius;
   }
 
-  void _addPoint(Offset position) { print(position);
+  void _addPoint(Offset position) { print(position); if(position != null){print("touching");}else{print("not touching");}
     // Ignore when same point is reported multiple times in a row
     if (_lastPosition == position) {
       return;
