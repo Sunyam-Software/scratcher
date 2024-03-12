@@ -133,61 +133,61 @@ class ScratcherState extends State<Scratcher> {
       future: _imageLoader,
       builder: (BuildContext context, AsyncSnapshot<ui.Image?> snapshot) {
         if (snapshot.connectionState != ConnectionState.waiting) {
-          return GestureDetector(
-             behavior: HitTestBehavior.opaque,
-            onPanStart: canScratch
-                ? (details) {
-                    widget.onScratchStart?.call();
-                    if (widget.enabled) {
-                      _addPoint(details.localPosition);
-                    }
-                  }
-                : null,
-            onPanUpdate: canScratch
-                ? (details) {
-                    widget.onScratchUpdate?.call();
-                    if (widget.enabled) {
-                      _addPoint(details.localPosition);
-                    }
-                  }
-                : null,
-            onPanEnd: canScratch
-                ? (details) {
-                    widget.onScratchEnd?.call();
-                    if (widget.enabled) {
-                      setState(() => points.add(null));
-                    }
-                  }
-                : null,
-            child: AnimatedSwitcher(
-              duration: transitionDuration ?? Duration.zero,
-              child: isFinished
-                  ? widget.child
-                  : CustomPaint(
-                      foregroundPainter: ScratchPainter(
-                        image: snapshot.data,
-                        imageFit: widget.image == null
-                            ? null
-                            : widget.image!.fit ?? BoxFit.cover,
-                        points: points,
-                        color: widget.color,
-                        onDraw: (size) {
-                          if (_lastKnownSize == null) {
-                            _setCheckpoints(size);
-                          } else if (_lastKnownSize != size &&
-                              widget.rebuildOnResize) {
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              reset();
-                            });
-                          }
+          // return GestureDetector(
+          //    behavior: HitTestBehavior.opaque,
+          //   onPanStart: canScratch
+          //       ? (details) {
+          //           widget.onScratchStart?.call();
+          //           if (widget.enabled) {
+          //             _addPoint(details.localPosition);
+          //           }
+          //         }
+          //       : null,
+          //   onPanUpdate: canScratch
+          //       ? (details) {
+          //           widget.onScratchUpdate?.call();
+          //           if (widget.enabled) {
+          //             _addPoint(details.localPosition);
+          //           }
+          //         }
+          //       : null,
+          //   onPanEnd: canScratch
+          //       ? (details) {
+          //           widget.onScratchEnd?.call();
+          //           if (widget.enabled) {
+          //             setState(() => points.add(null));
+          //           }
+          //         }
+          //       : null,
+          //   child: AnimatedSwitcher(
+          //     duration: transitionDuration ?? Duration.zero,
+          //     child: isFinished
+          //         ? widget.child
+          //         : CustomPaint(
+          //             foregroundPainter: ScratchPainter(
+          //               image: snapshot.data,
+          //               imageFit: widget.image == null
+          //                   ? null
+          //                   : widget.image!.fit ?? BoxFit.cover,
+          //               points: points,
+          //               color: widget.color,
+          //               onDraw: (size) {
+          //                 if (_lastKnownSize == null) {
+          //                   _setCheckpoints(size);
+          //                 } else if (_lastKnownSize != size &&
+          //                     widget.rebuildOnResize) {
+          //                   WidgetsBinding.instance.addPostFrameCallback((_) {
+          //                     reset();
+          //                   });
+          //                 }
 
-                          _lastKnownSize = size;
-                        },
-                      ),
-                      child: widget.child,
-                    ),
-            ),
-          );        
+          //                 _lastKnownSize = size;
+          //               },
+          //             ),
+          //             child: widget.child,
+          //           ),
+          //   ),
+          // );        
         
         }
 
