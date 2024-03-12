@@ -342,7 +342,7 @@ class ScratcherState extends State<Scratcher> {
     setState(() {
       transitionDuration = duration;
       isFinished = true;
-      canScratch = true;
+      canScratch = false;
       if (!thresholdReported && widget.threshold != null) {
         thresholdReported = true;
         widget.onThreshold?.call();
