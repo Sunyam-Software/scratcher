@@ -20,6 +20,7 @@ enum ScratchAccuracy {
   high,
 }
 
+
 double _getAccuracyValue(ScratchAccuracy accuracy) {
   switch (accuracy) {
     case ScratchAccuracy.low:
