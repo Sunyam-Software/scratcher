@@ -143,7 +143,7 @@ class ScratcherState extends State<Scratcher> {
                     }
                   }
                 : null,
-            onPanUpdate: canScratch
+            onHorizontalDragUpdate: canScratch
                 ? (details) {
                     widget.onScratchUpdate?.call();
                     if (widget.enabled) {
