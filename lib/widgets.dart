@@ -20,6 +20,7 @@ enum ScratchAccuracy {
   high,
 }
 
+bool _isTouching = false;
 
 double _getAccuracyValue(ScratchAccuracy accuracy) {
   switch (accuracy) {
@@ -138,6 +139,7 @@ class ScratcherState extends State<Scratcher> {
             onPanStart: canScratch
                 ? (details) {
                     widget.onScratchStart?.call();
+                    _isTouching = true;
                     if (widget.enabled) {
                       _addPoint(details.localPosition);
                     }
@@ -146,6 +148,7 @@ class ScratcherState extends State<Scratcher> {
             onPanUpdate: canScratch
                 ? (details) {
                     widget.onScratchUpdate?.call();
+                    _isTouching = true;
                     if (widget.enabled) {
                       _addPoint(details.localPosition);
                     }
@@ -154,6 +157,7 @@ class ScratcherState extends State<Scratcher> {
             onPanEnd: canScratch
                 ? (details) {
                     widget.onScratchEnd?.call();
+                    _isTouching = false;
                     if (widget.enabled) {
                       setState(() => points.add(null));
                     }
