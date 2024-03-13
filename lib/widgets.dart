@@ -115,8 +115,6 @@ class ScratcherState extends State<Scratcher> {
     return context.findRenderObject() as RenderBox?;
   }
 
-  bool _isTouching = false;
-
   @override
   void initState() {
     if (widget.image == null) {
@@ -142,7 +140,6 @@ class ScratcherState extends State<Scratcher> {
                     widget.onScratchStart?.call();
                     if (widget.enabled) {
                       _addPoint(details.localPosition);
-                      _isTouching = true;
                     }
                   }
                 : null,
@@ -151,7 +148,6 @@ class ScratcherState extends State<Scratcher> {
                     widget.onScratchUpdate?.call();
                     if (widget.enabled) {
                       _addPoint(details.localPosition);
-                      _isTouching = true;
                     }
                   }
                 : null,
@@ -160,7 +156,6 @@ class ScratcherState extends State<Scratcher> {
                     widget.onScratchEnd?.call();
                     if (widget.enabled) {
                       setState(() => points.add(null));
-                      _isTouching = false;
                     }
                   }
                 : null,
