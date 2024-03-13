@@ -99,10 +99,6 @@ class ScratcherState extends State<Scratcher> {
   late Future<ui.Image?> _imageLoader;
   Offset? _lastPosition;
 
-  // Add these two variables
-  bool _isTouching = false;
-  Offset _offset = Offset.zero;
-
   List<ScratchPoint?> points = [];
   late Set<Offset> checkpoints;
   Set<Offset> checked = {};
@@ -132,73 +128,73 @@ class ScratcherState extends State<Scratcher> {
   }
 
   @override
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {    
     return FutureBuilder<ui.Image?>(
       future: _imageLoader,
       builder: (BuildContext context, AsyncSnapshot<ui.Image?> snapshot) {
         if (snapshot.connectionState != ConnectionState.waiting) {
           return GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onPanStart: canScratch ? _handlePanStart : null,
-            onPanUpdate: canScratch ? _handlePanUpdate : null,
-            onPanEnd: canScratch ? _handlePanEnd : null,
-            child: Stack(
-              children: [
-                // Your existing code...
-                if (_isTouching)
-                  Positioned(
-                    left: _offset.dx - 12,
-                    top: _offset.dy - 12,
-                    child: Image.network(
-                      'https://static.vecteezy.com/system/resources/previews/024/043/960/original/money-coins-clipart-transparent-background-free-png.png',
-                      width: 34,
-                      height: 34,
+             behavior: HitTestBehavior.opaque,
+            onPanStart: canScratch
+                ? (details) {
+                    widget.onScratchStart?.call();
+                    if (widget.enabled) {
+                      _addPoint(details.localPosition);
+                    }
+                  }
+                : null,
+            onPanUpdate: canScratch
+                ? (details) {
+                    widget.onScratchUpdate?.call();
+                    if (widget.enabled) {
+                      _addPoint(details.localPosition);
+                    }
+                  }
+                : null,
+            onPanEnd: canScratch
+                ? (details) {
+                    widget.onScratchEnd?.call();
+                    if (widget.enabled) {
+                      setState(() => points.add(null));
+                    }
+                  }
+                : null,
+            child: AnimatedSwitcher(
+              duration: transitionDuration ?? Duration.zero,
+              child: isFinished
+                  ? widget.child
+                  : CustomPaint(
+                      foregroundPainter: ScratchPainter(
+                        image: snapshot.data,
+                        imageFit: widget.image == null
+                            ? null
+                            : widget.image!.fit ?? BoxFit.cover,
+                        points: points,
+                        color: widget.color,
+                        onDraw: (size) {
+                          if (_lastKnownSize == null) {
+                            _setCheckpoints(size);
+                          } else if (_lastKnownSize != size &&
+                              widget.rebuildOnResize) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              reset();
+                            });
+                          }
+
+                          _lastKnownSize = size;
+                        },
+                      ),
+                      child: widget.child,
                     ),
-                  ),
-              ],
             ),
-          );
+          );        
+        
         }
 
         return Container();
       },
     );
   }
-
-  // Gesture handling functions
-  void _handlePanStart(details) {
-    setState(() {
-      _isTouching = true;
-      _offset = details.localPosition;
-    });
-    widget.onScratchStart?.call();
-    if (widget.enabled) {
-      _addPoint(details.localPosition);
-    }
-  }
-
-  void _handlePanUpdate(details) {
-    setState(() {
-      _offset = details.localPosition;
-    });
-    widget.onScratchUpdate?.call();
-    if (widget.enabled) {
-      _addPoint(details.localPosition);
-    }
-  }
-
-  void _handlePanEnd(details) {
-    setState(() {
-      _isTouching = false;
-      _offset = Offset.zero;
-    });
-    widget.onScratchEnd?.call();
-    if (widget.enabled) {
-      setState(() => points.add(null));
-    }
-  }
-
 
   Future<ui.Image> _loadImage(Image image) async {
     // Create a completer to manage the asynchronous operation.
