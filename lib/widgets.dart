@@ -139,6 +139,7 @@ class ScratcherState extends State<Scratcher> {
     return Stack(
   children: [
     Listener(
+      key: GlobalKey(),
       behavior: HitTestBehavior.opaque,
       onPointerDown: canScratch
         ? (details) {
