@@ -140,7 +140,7 @@ class ScratcherState extends State<Scratcher> {
   children: [
     Listener(
       key: GlobalKey(),
-      behavior: HitTestBehavior.opaque,
+      behavior: HitTestBehavior.translucent,
       onPointerDown: canScratch
         ? (details) {
           widget.onScratchStart?.call();
