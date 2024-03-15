@@ -139,7 +139,6 @@ class ScratcherState extends State<Scratcher> {
     return Stack(
   children: [
     Listener(
-      key: GlobalKey(),
       onPointerDown: canScratch
         ? (details) {
           widget.onScratchStart?.call();
