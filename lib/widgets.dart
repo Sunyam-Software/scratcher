@@ -138,45 +138,46 @@ class ScratcherState extends State<Scratcher> {
   if (snapshot.connectionState != ConnectionState.waiting) {
     return Stack(
   children: [
-    Listener(
-      onPointerDown: canScratch
-        ? (details) {
-          widget.onScratchStart?.call();
-          if (widget.enabled) {
-            _addPoint(details.localPosition);
-            setState(() {
-              _isTouching = true;
-              _offset = details.localPosition;
-            });
-          }
-        }
-        : null,
-      onPointerMove: canScratch
-        ? (details) {
-          widget.onScratchUpdate?.call();
-          if (widget.enabled) {
-            _addPoint(details.localPosition);
-            if (_isTouching) {
-              setState(() {
-                _offset = details.localPosition;
-              });
-            }
-          }
-        }
-        : null,
-      onPointerUp: canScratch
-        ? (details) {
-          widget.onScratchEnd?.call();
-          if (widget.enabled) {
-            setState(() {
-              points.add(null);
-              _isTouching = false;
-              _offset = Offset.zero;
-            });
-          }
-        }
-        : null,
-      child: AnimatedSwitcher(
+    // Listener(
+    //   onPointerDown: canScratch
+    //     ? (details) {
+    //       widget.onScratchStart?.call();
+    //       if (widget.enabled) {
+    //         _addPoint(details.localPosition);
+    //         setState(() {
+    //           _isTouching = true;
+    //           _offset = details.localPosition;
+    //         });
+    //       }
+    //     }
+    //     : null,
+    //   onPointerMove: canScratch
+    //     ? (details) {
+    //       widget.onScratchUpdate?.call();
+    //       if (widget.enabled) {
+    //         _addPoint(details.localPosition);
+    //         if (_isTouching) {
+    //           setState(() {
+    //             _offset = details.localPosition;
+    //           });
+    //         }
+    //       }
+    //     }
+    //     : null,
+    //   onPointerUp: canScratch
+    //     ? (details) {
+    //       widget.onScratchEnd?.call();
+    //       if (widget.enabled) {
+    //         setState(() {
+    //           points.add(null);
+    //           _isTouching = false;
+    //           _offset = Offset.zero;
+    //         });
+    //       }
+    //     }
+    //     : null,
+      // child: 
+      AnimatedSwitcher(
         duration: transitionDuration ?? Duration.zero,
         child: isFinished
           ? widget.child
@@ -204,7 +205,7 @@ class ScratcherState extends State<Scratcher> {
             child: widget.child,
           ),
       ),
-    ),
+    // ),
     
     if (_isTouching)
       Positioned(
