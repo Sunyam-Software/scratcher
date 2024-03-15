@@ -98,6 +98,9 @@ class Scratcher extends StatefulWidget {
 class ScratcherState extends State<Scratcher> {
   late Future<ui.Image?> _imageLoader;
   Offset? _lastPosition;
+  bool _isTouching = false;
+  Offset _offset = Offset.zero;
+
 
   List<ScratchPoint?> points = [];
   late Set<Offset> checkpoints;
@@ -132,67 +135,96 @@ class ScratcherState extends State<Scratcher> {
     return FutureBuilder<ui.Image?>(
       future: _imageLoader,
       builder: (BuildContext context, AsyncSnapshot<ui.Image?> snapshot) {
-        if (snapshot.connectionState != ConnectionState.waiting) {
-          return GestureDetector(
-             behavior: HitTestBehavior.opaque,
-            onPanStart: canScratch
-                ? (details) {
-                    widget.onScratchStart?.call();
-                    if (widget.enabled) {
-                      _addPoint(details.localPosition);
-                    }
-                  }
-                : null,
-            onPanUpdate: canScratch
-                ? (details) {
-                    widget.onScratchUpdate?.call();
-                    if (widget.enabled) {
-                      _addPoint(details.localPosition);
-                    }
-                  }
-                : null,
-            onPanEnd: canScratch
-                ? (details) {
-                    widget.onScratchEnd?.call();
-                    if (widget.enabled) {
-                      setState(() => points.add(null));
-                    }
-                  }
-                : null,
-            child: AnimatedSwitcher(
-              duration: transitionDuration ?? Duration.zero,
-              child: isFinished
-                  ? widget.child
-                  : CustomPaint(
-                      foregroundPainter: ScratchPainter(
-                        image: snapshot.data,
-                        imageFit: widget.image == null
-                            ? null
-                            : widget.image!.fit ?? BoxFit.cover,
-                        points: points,
-                        color: widget.color,
-                        onDraw: (size) {
-                          if (_lastKnownSize == null) {
-                            _setCheckpoints(size);
-                          } else if (_lastKnownSize != size &&
-                              widget.rebuildOnResize) {
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              reset();
-                            });
-                          }
-
-                          _lastKnownSize = size;
-                        },
-                      ),
-                      child: widget.child,
-                    ),
-            ),
-          );        
-        
+  if (snapshot.connectionState != ConnectionState.waiting) {
+    return Stack(
+  children: [
+    Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: canScratch
+        ? (details) {
+          widget.onScratchStart?.call();
+          if (widget.enabled) {
+            _addPoint(details.localPosition);
+            setState(() {
+              _isTouching = true;
+              _offset = details.localPosition;
+            });
+          }
         }
+        : null,
+      onPointerMove: canScratch
+        ? (details) {
+          widget.onScratchUpdate?.call();
+          if (widget.enabled) {
+            _addPoint(details.localPosition);
+            if (_isTouching) {
+              setState(() {
+                _offset = details.localPosition;
+              });
+            }
+          }
+        }
+        : null,
+      onPointerUp: canScratch
+        ? (details) {
+          widget.onScratchEnd?.call();
+          if (widget.enabled) {
+            setState(() {
+              points.add(null);
+              _isTouching = false;
+              _offset = Offset.zero;
+            });
+          }
+        }
+        : null,
+      child: AnimatedSwitcher(
+        duration: transitionDuration ?? Duration.zero,
+        child: isFinished
+          ? widget.child
+          : CustomPaint(
+            foregroundPainter: ScratchPainter(
+              image: snapshot.data,
+              imageFit: widget.image == null
+                ? null
+                : widget.image!.fit ?? BoxFit.cover,
+              points: points,
+              color: widget.color,
+              onDraw: (size) {
+                if (_lastKnownSize == null) {
+                  _setCheckpoints(size);
+                } else if (_lastKnownSize != size &&
+                  widget.rebuildOnResize) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    reset();
+                  });
+                }
 
-        return Container();
-      },
+                _lastKnownSize = size;
+              },
+            ),
+            child: widget.child,
+          ),
+      ),
+    ),
+    
+    if (_isTouching)
+      Positioned(
+        left: _offset.dx - 12,
+        top: _offset.dy - 12,
+        child: Image.network(
+          'https://static.vecteezy.com/system/resources/previews/024/043/960/original/money-coins-clipart-transparent-background-free-png.png',
+          width: 34,
+          height: 34,
+        ),
+      ),
+  ],
+);
+
+  }
+
+  return Container();
+},
+
     );
   }
 
