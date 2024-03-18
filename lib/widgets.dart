@@ -139,7 +139,7 @@ class ScratcherState extends State<Scratcher> {
     return Stack(
   children: [
     Listener(
-      behavior: HitTestBehavior.translucent,
+      behavior: HitTestBehavior.deferToChild,
       onPointerDown: canScratch
         ? (details) {
           widget.onScratchStart?.call();
