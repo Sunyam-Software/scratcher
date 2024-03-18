@@ -131,97 +131,102 @@ class ScratcherState extends State<Scratcher> {
   }
 
   @override
-Widget build(BuildContext context) {    
-  return Listener(
-    onPointerDown: _handlePointerDown,
-    onPointerMove: _handlePointerMove,
-    onPointerUp: _handlePointerUp,
-    child: FutureBuilder<ui.Image?>(
+  Widget build(BuildContext context) {    
+    return FutureBuilder<ui.Image?>(
       future: _imageLoader,
       builder: (BuildContext context, AsyncSnapshot<ui.Image?> snapshot) {
-        if (snapshot.connectionState != ConnectionState.waiting) {
-          return Stack(
-            children: [
-              AnimatedSwitcher(
-                duration: transitionDuration ?? Duration.zero,
-                child: isFinished
-                  ? widget.child
-                  : CustomPaint(
-                    foregroundPainter: ScratchPainter(
-                      image: snapshot.data,
-                      imageFit: widget.image == null
-                        ? null
-                        : widget.image!.fit ?? BoxFit.cover,
-                      points: points,
-                      color: widget.color,
-                      onDraw: (size) {
-                        if (_lastKnownSize == null) {
-                          _setCheckpoints(size);
-                        } else if (_lastKnownSize != size &&
-                          widget.rebuildOnResize) {
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            reset();
-                          });
-                        }
-                        _lastKnownSize = size;
-                      },
-                    ),
-                    child: widget.child,
-                  ),
-              ),
-              if (_isTouching)
-                Positioned(
-                  left: _offset.dx - 12,
-                  top: _offset.dy - 12,
-                  child: Image.network(
-                    'https://static.vecteezy.com/system/resources/previews/024/043/960/original/money-coins-clipart-transparent-background-free-png.png',
-                    width: 34,
-                    height: 34,
-                  ),
-                ),
-            ],
-          );
+  if (snapshot.connectionState != ConnectionState.waiting) {
+    return Stack(
+  children: [
+    Listener(
+      onPointerDown: canScratch
+        ? (details) {
+          widget.onScratchStart?.call();
+          if (widget.enabled) {
+            _addPoint(details.localPosition);
+            setState(() {
+              _isTouching = true;
+              _offset = details.localPosition;
+            });
+          }
         }
-        return Container();
-      },
+        : null,
+      onPointerMove: canScratch
+        ? (details) {
+          widget.onScratchUpdate?.call();
+          if (widget.enabled) {
+            _addPoint(details.localPosition);
+            if (_isTouching) {
+              setState(() {
+                _offset = details.localPosition;
+              });
+            }
+          }
+        }
+        : null,
+      onPointerUp: canScratch
+        ? (details) {
+          widget.onScratchEnd?.call();
+          if (widget.enabled) {
+            setState(() {
+              points.add(null);
+              _isTouching = false;
+              _offset = Offset.zero;
+            });
+          }
+        }
+        : null,
+      child: 
+      AnimatedSwitcher(
+        duration: transitionDuration ?? Duration.zero,
+        child: isFinished
+          ? widget.child
+          : CustomPaint(
+            foregroundPainter: ScratchPainter(
+              image: snapshot.data,
+              imageFit: widget.image == null
+                ? null
+                : widget.image!.fit ?? BoxFit.cover,
+              points: points,
+              color: widget.color,
+              onDraw: (size) {
+                if (_lastKnownSize == null) {
+                  _setCheckpoints(size);
+                } else if (_lastKnownSize != size &&
+                  widget.rebuildOnResize) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    reset();
+                  });
+                }
+
+                _lastKnownSize = size;
+              },
+            ),
+            child: widget.child,
+          ),
+      ),
     ),
-  );
-}
+    
+    if (_isTouching)
+      Positioned(
+        left: _offset.dx - 12,
+        top: _offset.dy - 12,
+        child: Image.network(
+          'https://static.vecteezy.com/system/resources/previews/024/043/960/original/money-coins-clipart-transparent-background-free-png.png',
+          width: 34,
+          height: 34,
+        ),
+      ),
+  ],
+);
 
-void _handlePointerDown(PointerDownEvent event) {
-  widget.onScratchStart?.call();
-  if (widget.enabled) {
-    _addPoint(event.localPosition);
-    setState(() {
-      _isTouching = true;
-      _offset = event.localPosition;
-    });
   }
-}
 
-void _handlePointerMove(PointerMoveEvent event) {
-  widget.onScratchUpdate?.call();
-  if (widget.enabled) {
-    _addPoint(event.localPosition);
-    if (_isTouching) {
-      setState(() {
-        _offset = event.localPosition;
-      });
-    }
+  return Container();
+},
+
+    );
   }
-}
-
-void _handlePointerUp(PointerUpEvent event) {
-  widget.onScratchEnd?.call();
-  if (widget.enabled) {
-    setState(() {
-      points.add(null);
-      _isTouching = false;
-      _offset = Offset.zero;
-    });
-  }
-}
-
 
   Future<ui.Image> _loadImage(Image image) async {
     // Create a completer to manage the asynchronous operation.
