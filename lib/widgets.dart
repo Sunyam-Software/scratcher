@@ -176,8 +176,7 @@ class ScratcherState extends State<Scratcher> {
           }
         }
         : null,
-      child: 
-      AnimatedSwitcher(
+      child: AnimatedSwitcher(
         duration: transitionDuration ?? Duration.zero,
         child: isFinished
           ? widget.child
@@ -289,11 +288,20 @@ class ScratcherState extends State<Scratcher> {
     if (point != null && !checked.contains(point)) {
       checked.add(point);
 
-      final radius = widget.brushSize / 2;
-      checkpoints.removeWhere(
-        (checkpoint) => _inCircle(checkpoint, point!, radius),
-      );
+      // final radius = widget.brushSize / 2;
+      // checkpoints.removeWhere(
+      //   (checkpoint) => _inCircle(checkpoint, point!, radius),
+      // );
 
+      final reached = <Offset>{};
+      for (final checkpoint in checkpoints) {
+        final radius = widget.brushSize / 2;
+        if (_inCircle(checkpoint, point, radius)) {
+          reached.add(checkpoint);
+        }
+      }
+
+      checkpoints = checkpoints.difference(reached);
       progress =
           ((totalCheckpoints - checkpoints.length) / totalCheckpoints) * 100;
       if (progress - progressReported >= _progressReportStep ||
