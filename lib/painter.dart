@@ -62,7 +62,7 @@ class ScratchPainter extends CustomPainter {
 
     var path = Path();
     var isStarted = false;
-    ScratchPoint? previousPoint;
+    ScratchPoint? previousPoint; print(previousPoint);
 
     for (final point in points) {
       if (point == null) {
